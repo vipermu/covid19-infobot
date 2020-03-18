@@ -2,7 +2,7 @@ name: covid19-infobot
 channels:
   - defaults
 dependencies:
-  - python=3.8.1=h0371630_1
+  - python=3.8.1
   - pip:
     - googletrans==2.4.0
     - python-telegram-bot==12.4.2
