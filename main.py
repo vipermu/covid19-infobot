@@ -115,7 +115,7 @@ def main():
     token_filename = 'token.txt'
     if os.path.exists(token_filename):
         with open(token_filename, 'r') as token_file:
-        token = token_file.read().strip()
+            token = token_file.read().strip()
     else:
         token = os.environ['TOKEN']
 
