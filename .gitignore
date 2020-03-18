@@ -1,5 +1,6 @@
 # Extensions ignored
 *.txt
+*.csv
 
 # Directories ignored
 .vscode
