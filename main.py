@@ -112,8 +112,12 @@ country_info = CountryInfo()
 
 
 def main():
-    with open('token.txt', 'r') as token_file:
+    token_filename = 'token.txt'
+    if os.path.exists(token_filename):
+        with open(token_filename, 'r') as token_file:
         token = token_file.read().strip()
+    else:
+        token = os.environ['TOKEN']
 
     updater = ext.Updater(
         token=token,
