@@ -1,8 +1,16 @@
 FROM continuumio/miniconda3
 
-ADD . /app
 WORKDIR /app
 
+ADD ./environment.yml /app/environment.yml
 RUN conda env create -f /app/environment.yml
+SHELL ["conda", "run", "-n", "covid19-infobot", "/bin/bash", "-c"]
 
-CMD python /app/main.py
+RUN echo 'Make sure that covid19-infobot environment is activated:'
+RUN python -c "import telegram"
+
+ADD ./country_trans_dict.pkl .
+ADD ./data_dict.pkl .
+ADD ./main.py .
+
+ENTRYPOINT ["conda", "run", "-n", "covid19-infobot", "python", "main.py"]
