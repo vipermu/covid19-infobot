@@ -147,8 +147,24 @@ def main():
     dispatcher.add_handler(echo_handler)
 
     print("Ready!")
+    mode = os.environ.get('MODE', 'dev')
+    if mode == 'prod':
+        port = int(os.environ.get("PORT", "8443"))
+        HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", "covid19-infobot")
 
+        # Code from https://github.com/python-telegram-bot/python-telegram-bot/wiki/Webhooks#heroku
+        updater.start_webhook(listen="0.0.0.0",
+                              port=port,
+                              url_path=token)
+        updater.bot.set_webhook(
+            "https://{}.herokuapp.com/{}".format(HEROKU_APP_NAME, token))
+
+    elif mode == 'dev':
     updater.start_polling()
+
+    else:
+        logger.error("No MODE specified!")
+        sys.exit(1)
 
 
 def start(update, context):
