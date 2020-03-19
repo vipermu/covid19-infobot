@@ -9,8 +9,16 @@ import telegram.ext as ext
 from googletrans import Translator
 
 
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO,
+)
+logger = logging.getLogger()
+
+
 class CountryInfo:
     def __init__(self):
+        logger.info("Processing data...")
         print("Processing data...")
 
         data_file_path = './data/covid_19_clean_complete.csv'
@@ -136,11 +144,6 @@ def main():
                     text="Hola! Los datos han sido actualizados :)",
                 )
 
-    logging.basicConfig(
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO,
-    )
-
     start_handler = ext.CommandHandler('start', start)
     dispatcher.add_handler(start_handler)
 
@@ -148,6 +151,8 @@ def main():
     dispatcher.add_handler(echo_handler)
 
     print("Ready!")
+    logger.info("Ready!")
+
     mode = os.environ.get('MODE', 'dev')
     if mode == 'prod':
         port = int(os.environ.get("PORT", "8443"))
@@ -161,7 +166,7 @@ def main():
             "https://{}.herokuapp.com/{}".format(HEROKU_APP_NAME, token))
 
     elif mode == 'dev':
-    updater.start_polling()
+        updater.start_polling()
 
     else:
         logger.error("No MODE specified!")
@@ -185,6 +190,7 @@ def get_country_info(update, context):
         chat_ids_file.write(str(chat_id) + '\n')
 
     print(f"COUNTRY INFO QUERIED --> {chat_id}")
+    logger.info(f"COUNTRY INFO QUERIED --> {chat_id}")
 
     country = update.message.text
     data_dict = country_info.data_dict
