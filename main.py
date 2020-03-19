@@ -106,7 +106,7 @@ class CountryInfo:
                         'recovered': int(recovered),
                     }
 
-        return tuple(country_trans_dict, dict(data_dict))
+        return country_trans_dict, dict(data_dict)
 
 
 country_info = CountryInfo()
