@@ -195,7 +195,7 @@ def get_country_info(update, context):
     country = update.message.text
     data_dict = country_info.data_dict
     country_list = list(data_dict.keys())
-    if country not in list(country_list):
+    if country not in country_list:
         text = f"Asegurate de que has introducido correctamente el nombre del país. " \
             f"Aquí tienes una lista de los países de los que puedes obtener información:\n{country_list}"
     else:
