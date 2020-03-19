@@ -24,7 +24,6 @@ class CountryInfo:
                 self.data_dict = pickle.load(pkl_file)
         else:
 
-            self.translator = Translator()
             self.country_trans_dict, self.data_dict = self.get_dictionaries(
                 data_file_path=data_file_path,
             )
@@ -40,6 +39,8 @@ class CountryInfo:
     def get_dictionaries(
         data_file_path: str,
     ) -> Tuple[Dict[str, str], Dict[str, Dict[str, Any]]]:
+
+        translator = Translator()
         country_trans_dict = {}
         data_dict = defaultdict(lambda: {
             'date': None,
@@ -85,7 +86,7 @@ class CountryInfo:
                     elif country == 'Cruise Ship':
                         continue
                     else:
-                        trans_country = self.translator.translate(
+                        trans_country = translator.translate(
                             country, src='en', dest='es').text
 
                     country_trans_dict[country] = trans_country
