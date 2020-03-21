@@ -104,16 +104,6 @@ def main():
     )
     dispatcher = updater.dispatcher
 
-    send_updates = False
-    if send_updates:
-        with open('chat_ids.txt', 'r') as chat_ids_file:
-            chat_ids_list = list(set(chat_ids_file.readlines()))
-            for chat_id in chat_ids_list:
-                dispatcher.bot.send_message(
-                    chat_id=int(chat_id),
-                    text="Hola! Los datos han sido actualizados :)",
-                )
-
     start_handler = ext.CommandHandler('start', start)
     dispatcher.add_handler(start_handler)
 
