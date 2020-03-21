@@ -153,11 +153,12 @@ def get_country_info(update, context):
     logger.info(f"COUNTRY INFO QUERIED --> {chat_id}")
 
     country = update.message.text
-    data_dict = country_info.data_dict
+    data_dict = data_manager.data_dict
     country_list = list(data_dict.keys())
     if country not in country_list:
-        text = f"Asegurate de que has introducido correctamente el nombre del país. " \
-            f"Aquí tienes una lista de los países de los que puedes obtener información:\n{country_list}"
+        text = "Asegurate de que has introducido correctamente el nombre del país. " \
+            "Aquí tienes una lista de los países de los que puedes obtener información:\n" \
+            + '\n'.join(country_list)
     else:
         country_dict = data_dict[country]
         text = f"País: {country}\n" \
