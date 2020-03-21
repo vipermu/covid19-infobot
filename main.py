@@ -18,6 +18,7 @@ logger = logging.getLogger()
 
 class DataManager:
     def __init__(self):
+        self.rescrape_time = 10000  # 2h 45mins
         self.language_dict = {
             'spanish': 'es',
             'english': 'en',
@@ -151,7 +152,8 @@ def get_country_info(update, context):
 
     logger.info(f"COUNTRY INFO QUERIED --> {chat_id}")
 
-    country = update.message.text
+    if time.time() - data_manager.last_scrape_time > data_manager.rescrape_time:
+        data_manager.update_data_dict()
     data_dict = data_manager.data_dict
     country_list = list(data_dict.keys())
     if country not in country_list:
