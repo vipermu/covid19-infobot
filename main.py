@@ -159,20 +159,24 @@ def get_country_info(update, context):
             "Aquí tienes una lista de los países de los que puedes obtener información:\n" \
             + '\n'.join(country_list)
     else:
-        country_dict = data_dict[country]
-        text = f"País: {country_dict['country']}\n"
-        f"Número total de casos: {country_dict['total_cases']}\n"
-        f"Número de nevos casos: {country_dict['new_cases']}\n"
-        f"Número total de muertes: {country_dict['total_deaths']} \n"
-        f"Número de nuevas muertes: {country_dict['new_deaths']} \n"
-        f"Número total de recuperaciones: {country_dict['total_recoveries']} \n"
-        f"Número de contagios activos: {country_dict['active_cases']} \n"
-        f"Número de personas en estado crítico: {country_dict['critical']} \n"
-        f"Número de casos por millón: {country_dict['cases_per_milion']} "
+        text = f"<b><i>{update.message.text}</i></b> cuenta con un total de " \
+            f"<b><i>{country_dict['total_cases']} casos confirmados</i></b>.\n\n" \
+            f"Por el momento han habido " \
+            f"<b><i>{country_dict['total_deaths']} muertes</i></b> y " \
+            f"<b><i>{country_dict['total_recoveries']} recuperaciones</i></b>.\n\n" \
+            f"En las últimas hora se han confirmado " \
+            f"<b><i>{country_dict['new_cases']} nuevos casos</i></b> y " \
+            f"<b><i>{country_dict['new_deaths']} nuevos fallecimientos</i></b>.\n\n" \
+            f"Hay un total de <b><i>{country_dict['active_cases']} casos activos</i></b> "\
+            f" de los cuales <b><i>{country_dict['critical']}</i></b> se encuentran " \
+            f"en <b><i>estado crítico</i></b>. \n\n" \
+            f"Existen <b><i>{country_dict['cases_per_million']}</i></b> casos " \
+            f"<b><i>por cada millón</i></b> de personas. \n\n" \
 
     context.bot.send_message(
         chat_id=chat_id,
-        text=text
+        text=text,
+        parse_mode=telegram.ParseMode.HTML,
     )
 
 
