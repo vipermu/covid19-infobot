@@ -161,10 +161,15 @@ def get_country_info(update, context):
             + '\n'.join(country_list)
     else:
         country_dict = data_dict[country]
-        text = f"País: {country}\n" \
-            f"Casos confirmados: {country_dict['confirmed']}\n" \
-            f"Numero de muertes: {country_dict['deaths']}\n" \
-            f"Numero de recuperaciones: {country_dict['recovered']} "
+        text = f"País: {country_dict['country']}\n"
+        f"Número total de casos: {country_dict['total_cases']}\n"
+        f"Número de nevos casos: {country_dict['new_cases']}\n"
+        f"Número total de muertes: {country_dict['total_deaths']} \n"
+        f"Número de nuevas muertes: {country_dict['new_deaths']} \n"
+        f"Número total de recuperaciones: {country_dict['total_recoveries']} \n"
+        f"Número de contagios activos: {country_dict['active_cases']} \n"
+        f"Número de personas en estado crítico: {country_dict['critical']} \n"
+        f"Número de casos por millón: {country_dict['cases_per_milion']} "
 
     context.bot.send_message(
         chat_id=chat_id,
