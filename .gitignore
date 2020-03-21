@@ -5,3 +5,4 @@
 
 # Directories ignored
 .vscode
+__pycache__
