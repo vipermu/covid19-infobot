@@ -10,6 +10,6 @@ RUN echo 'Make sure that covid19-infobot environment is activated:'
 RUN python -c "import telegram"
 
 ADD ./main.py .
-ADD ./scrapper.py .
+ADD ./scraper.py .
 
 ENTRYPOINT ["conda", "run", "-n", "covid19-infobot", "python", "main.py"]
