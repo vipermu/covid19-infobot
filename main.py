@@ -42,9 +42,11 @@ class DataManager:
 
         en_to_es_country_dict_path = './en_to_es_country_dict.pkl'
         if os.path.exists(en_to_es_country_dict_path):
-            with open(en_to_es_country_dict_path, 'r') as pickle_file:
+            dump_en_to_es_dict = True
+            with open(en_to_es_country_dict_path, 'rb') as pickle_file:
                 en_to_es_country_dict = pickle.load(pickle_file)
         else:
+            dump_en_to_es_dict = False
             en_to_es_country_dict = {}
 
         for country_key, country_dict in data_dict.items():
@@ -78,8 +80,8 @@ class DataManager:
                 trans_country_name = en_to_es_country_dict[country_name]
 
             data_dict[country_key][country_name] = trans_country_name
-
-        with open(en_to_es_country_dict_path, 'w') as pickle_file:
+        if dump_en_to_es_dict:
+            with open(en_to_es_country_dict_path, 'wb') as pickle_file:
             pickle.dump(en_to_es_country_dict, pickle_file,
                         protocol=pickle.HIGHEST_PROTOCOL)
 
