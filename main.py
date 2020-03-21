@@ -1,4 +1,3 @@
-import csv
 import os
 import pickle
 import logging
@@ -45,7 +44,7 @@ class DataManager:
         if os.path.exists(en_to_es_country_dict_path):
             with open(en_to_es_country_dict_path, 'r') as pickle_file:
                 en_to_es_country_dict = pickle.load(pickle_file)
-                else:
+        else:
             en_to_es_country_dict = {}
 
         for country_key, country_dict in data_dict.items():
@@ -67,7 +66,7 @@ class DataManager:
                     trans_country_name = 'Irán'
                 elif country_name == 'Turkey':
                     trans_country_name = 'Turquía'
-                    else:
+                else:
                     trans_country_name = translator.translate(
                         country_name, src='en', dest='es').text
 
@@ -110,7 +109,6 @@ def main():
     country_handler = ext.MessageHandler(ext.Filters.text, get_country_info)
     dispatcher.add_handler(country_handler)
 
-    print("Ready!")
     logger.info("Ready!")
 
     mode = os.environ.get('MODE', 'dev')
@@ -149,7 +147,6 @@ def get_country_info(update, context):
     with open('chat_ids.txt', 'a') as chat_ids_file:
         chat_ids_file.write(str(chat_id) + '\n')
 
-    print(f"COUNTRY INFO QUERIED --> {chat_id}")
     logger.info(f"COUNTRY INFO QUERIED --> {chat_id}")
 
     country = update.message.text
