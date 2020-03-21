@@ -11,6 +11,17 @@ def get_soup_from_url(
     return soup
 
 
+def process_data_item(data):
+    data = data.text.strip()
+    data = data.replace(',', '')
+    data = data.replace('+', '')
+    if data == '':
+        data = '0'
+    if data.isdecimal():
+        data = int(data)
+    return data
+
+
 def get_table_data_from_soup(
     soup: BeautifulSoup,
 ) -> None:
@@ -30,7 +41,7 @@ def get_table_data_from_soup(
             assert len(data_soup) == len(key_list), \
                 'Key list and numbers of data elements should be equal.'
 
-            data_text_list = [data.text for data in data_soup]
+            data_text_list = list(map(process_data_item, data_soup))
             country_dict = dict(zip(key_list, data_text_list))
             data_dict[country_dict['country'].lower()] = country_dict
 
