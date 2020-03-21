@@ -152,13 +152,29 @@ def get_country_info(update, context):
 
     if time.time() - data_manager.last_scrape_time > data_manager.rescrape_time:
         data_manager.update_data_dict()
+
+    req_country = update.message.text.lower()
     data_dict = data_manager.data_dict
-    country_list = list(data_dict.keys())
-    if country not in country_list:
+
+    country_list = [country_key for country_key in data_dict.keys()
+                    if country_key != 'total:']
+
+    if data_manager.language == 'es':
+        es_to_en_country_dict = data_manager.es_to_en_country_dict
+        country_list = [country_key for country_key in es_to_en_country_dict.keys()
+                        if country_key != 'total:']
+
+    country_list.sort()
+
+    if req_country.lower() not in country_list:
         text = "Asegurate de que has introducido correctamente el nombre del país. " \
             "Aquí tienes una lista de los países de los que puedes obtener información:\n" \
             + '\n'.join(country_list)
     else:
+        if data_manager.language == 'es':
+            req_country = es_to_en_country_dict[req_country]
+
+        country_dict = data_dict[req_country.lower()]
         text = f"<b><i>{update.message.text}</i></b> cuenta con un total de " \
             f"<b><i>{country_dict['total_cases']} casos confirmados</i></b>.\n\n" \
             f"Por el momento han habido " \
