@@ -107,8 +107,8 @@ def main():
     start_handler = ext.CommandHandler('start', start)
     dispatcher.add_handler(start_handler)
 
-    echo_handler = ext.MessageHandler(ext.Filters.text, get_country_info)
-    dispatcher.add_handler(echo_handler)
+    country_handler = ext.MessageHandler(ext.Filters.text, get_country_info)
+    dispatcher.add_handler(country_handler)
 
     print("Ready!")
     logger.info("Ready!")
