@@ -82,8 +82,8 @@ class DataManager:
             data_dict[country_key][country_name] = trans_country_name
         if dump_en_to_es_dict:
             with open(en_to_es_country_dict_path, 'wb') as pickle_file:
-            pickle.dump(en_to_es_country_dict, pickle_file,
-                        protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(en_to_es_country_dict, pickle_file,
+                            protocol=pickle.HIGHEST_PROTOCOL)
 
         return data_dict
 
