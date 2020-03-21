@@ -1,8 +1,11 @@
 name: covid19-infobot
 channels:
   - defaults
+  - anaconda
 dependencies:
   - python=3.8.1
+  - beautifulsoup4=4.8.2
   - pip:
     - googletrans==2.4.0
     - python-telegram-bot==12.4.2
+    - lxml==4.5.0
