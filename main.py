@@ -32,28 +32,27 @@ class DataManager:
         self.data_dict = scraper.scrape_worldometers_data()
         self.last_scrape_time = time.time()
 
-        if self.language != 'en':
-            self.data_dict = eval(
-                f'self.translate_dict_to_{self.language}(self.data_dict)')
+        if self.language == 'es':
+            self.es_to_en_country_dict = self.get_es_to_en_dict(self.data_dict)
 
-    def translate_dict_to_es(
-        self,
+    @staticmethod
+    def get_es_to_en_dict(
         data_dict: Dict[str, Dict[str, str]]
-    ) -> Tuple[Dict[str, str], Dict[str, Dict[str, Any]]]:
+    ) -> Tuple[Dict[str, str]]:
         translator = Translator()
+        extended_data_dict = data_dict.copy()
 
-        en_to_es_country_dict_path = './en_to_es_country_dict.pkl'
+        en_to_es_country_dict_path = './es_to_en_country_dict.pkl'
         if os.path.exists(en_to_es_country_dict_path):
-            dump_en_to_es_dict = True
             with open(en_to_es_country_dict_path, 'rb') as pickle_file:
-                en_to_es_country_dict = pickle.load(pickle_file)
+                es_to_en_country_dict = pickle.load(pickle_file)
+            return es_to_en_country_dict
         else:
-            dump_en_to_es_dict = False
-            en_to_es_country_dict = {}
+            es_to_en_country_dict = {}
 
         for country_key, country_dict in data_dict.items():
             country_name = country_dict['country']
-            if country_name not in en_to_es_country_dict:
+            if country_name not in country_dict.keys():
                 if country_name == 'Diamond Princess':
                     trans_country_name = 'Diamond Princess (crucero)'
                 elif country_name == 'Bahrain':
@@ -70,24 +69,22 @@ class DataManager:
                     trans_country_name = 'Irán'
                 elif country_name == 'Turkey':
                     trans_country_name = 'Turquía'
+                elif country_name == 'Sint Maarten':
+                    trans_country_name = 'San Martín'
                 else:
                     trans_country_name = translator.translate(
                         country_name, src='en', dest='es').text
 
-                en_to_es_country_dict[country_name] = trans_country_name
-
                 logger.info(f"Transled English to Spanish: "
                             f"{country_name} --> {trans_country_name}")
-            else:
-                trans_country_name = en_to_es_country_dict[country_name]
 
-            data_dict[country_key][country_name] = trans_country_name
-        if dump_en_to_es_dict:
+                es_to_en_country_dict[trans_country_name.lower()] = country_key
+
             with open(en_to_es_country_dict_path, 'wb') as pickle_file:
-                pickle.dump(en_to_es_country_dict, pickle_file,
+            pickle.dump(es_to_en_country_dict, pickle_file,
                             protocol=pickle.HIGHEST_PROTOCOL)
 
-        return data_dict
+        return es_to_en_country_dict
 
 
 data_manager = DataManager()
