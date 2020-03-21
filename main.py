@@ -4,6 +4,7 @@ import logging
 import time
 from typing import *
 
+import telegram
 import telegram.ext as ext
 from googletrans import Translator
 
