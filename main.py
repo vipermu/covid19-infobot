@@ -17,7 +17,7 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 
-class CountryInfo:
+class DataManager:
     def __init__(self):
         self.language_dict = {
             'spanish': 'es',
@@ -87,7 +87,7 @@ class CountryInfo:
         return data_dict
 
 
-country_info = CountryInfo()
+data_manager = DataManager()
 
 
 def main():
