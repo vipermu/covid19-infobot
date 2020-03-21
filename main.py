@@ -1,13 +1,13 @@
-import csv
 import os
 import pickle
 import logging
-from collections import defaultdict
+import time
 from typing import *
 
 import telegram.ext as ext
 from googletrans import Translator
 
+import scraper as scraper
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -16,108 +16,79 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 
-class CountryInfo:
+class DataManager:
     def __init__(self):
-        logger.info("Processing data...")
-        print("Processing data...")
+        self.language_dict = {
+            'spanish': 'es',
+            'english': 'en',
+        }
+        self.language = self.language_dict['spanish']
+        self.update_data_dict()
 
-        data_file_path = './data/covid_19_clean_complete.csv'
-        country_trans_dict_pkl_file = 'country_trans_dict.pkl'
-        data_dict_pkl_file = 'data_dict.pkl'
+    def update_data_dict(self):
+        logger.info("Extracting data...")
+        self.data_dict = scraper.scrape_worldometers_data()
+        self.last_scrape_time = time.time()
 
-        if os.path.exists(country_trans_dict_pkl_file):
-            with open(country_trans_dict_pkl_file, 'rb') as pkl_file:
-                self.country_trans_dict = pickle.load(pkl_file)
-            with open(data_dict_pkl_file, 'rb') as pkl_file:
-                self.data_dict = pickle.load(pkl_file)
-        else:
+        if self.language != 'en':
+            self.data_dict = eval(
+                f'self.translate_dict_to_{self.language}(self.data_dict)')
 
-            self.country_trans_dict, self.data_dict = self.get_dictionaries(
-                data_file_path=data_file_path,
-            )
-
-            with open(country_trans_dict_pkl_file, 'wb') as pkl_file:
-                pickle.dump(self.country_trans_dict, pkl_file,
-                            protocol=pickle.HIGHEST_PROTOCOL)
-            with open(data_dict_pkl_file, 'wb') as pkl_file:
-                pickle.dump(self.data_dict, pkl_file,
-                            protocol=pickle.HIGHEST_PROTOCOL)
-
-    @staticmethod
-    def get_dictionaries(
-        data_file_path: str,
+    def translate_dict_to_es(
+        self,
+        data_dict: Dict[str, Dict[str, str]]
     ) -> Tuple[Dict[str, str], Dict[str, Dict[str, Any]]]:
-
         translator = Translator()
-        country_trans_dict = {}
-        data_dict = defaultdict(lambda: {
-            'date': None,
-            'confirmed': 0,
-            'deaths': 0,
-            'recovered': 0,
-        })
 
-        with open(data_file_path, newline='') as csv_file:
-            data_reader = csv.reader(csv_file, delimiter=',', quotechar='|')
-            header_list = next(data_reader)
-            for data in data_reader:
-                # TODO: solve problem of comma for Korea
-                if len(data) != len(header_list):
-                    _province, country1, country2, _lat, _long, date, \
-                        confirmed, deaths, recovered = data
-                    country = country1[1:] + country2[:-1]
+        en_to_es_country_dict_path = './en_to_es_country_dict.pkl'
+        if os.path.exists(en_to_es_country_dict_path):
+            dump_en_to_es_dict = True
+            with open(en_to_es_country_dict_path, 'rb') as pickle_file:
+                en_to_es_country_dict = pickle.load(pickle_file)
+        else:
+            dump_en_to_es_dict = False
+            en_to_es_country_dict = {}
+
+        for country_key, country_dict in data_dict.items():
+            country_name = country_dict['country']
+            if country_name not in en_to_es_country_dict:
+                if country_name == 'Diamond Princess':
+                    trans_country_name = 'Diamond Princess (crucero)'
+                elif country_name == 'Bahrain':
+                    trans_country_name = 'Baréin'
+                elif country_name == 'North Macedonia':
+                    trans_country_name = 'Macedonia del Norte'
+                elif country_name == 'Qatar':
+                    trans_country_name = 'Qatar'
+                elif country_name == 'Jordan':
+                    trans_country_name = 'Jordania'
+                elif country_name == 'Togo':
+                    trans_country_name = 'Togo'
+                elif country_name == 'Iran':
+                    trans_country_name = 'Irán'
+                elif country_name == 'Turkey':
+                    trans_country_name = 'Turquía'
                 else:
-                    _province, country, _lat, _long, date, confirmed, \
-                        deaths, recovered = data
+                    trans_country_name = translator.translate(
+                        country_name, src='en', dest='es').text
 
-                if country not in country_trans_dict.keys():
-                    if country == 'US':
-                        trans_country = 'Estados Unidos'
-                    elif country == 'Bahrain':
-                        trans_country = 'Baréin'
-                    elif country == 'North Macedonia':
-                        trans_country = 'Macedonia del Norte'
-                    elif country == 'Qatar':
-                        trans_country = 'Qatar'
-                    elif country == 'Jordan':
-                        trans_country = 'Jordania'
-                    elif country == 'Togo':
-                        trans_country = 'Togo'
-                    elif country == 'Holly See':
-                        trans_country = 'Vaticano'
-                    elif country == 'Iran':
-                        trans_country = 'Irán'
-                    elif country == 'Turkey':
-                        trans_country = 'Turquía'
-                    elif country == 'Taiwan*':
-                        trans_country = 'Taiwan'
-                    elif country == 'Cruise Ship':
-                        continue
-                    else:
-                        trans_country = translator.translate(
-                            country, src='en', dest='es').text
+                en_to_es_country_dict[country_name] = trans_country_name
 
-                    country_trans_dict[country] = trans_country
+                logger.info(f"Transled English to Spanish: "
+                            f"{country_name} --> {trans_country_name}")
+            else:
+                trans_country_name = en_to_es_country_dict[country_name]
 
-                country = country_trans_dict[country]
+            data_dict[country_key][country_name] = trans_country_name
+        if dump_en_to_es_dict:
+            with open(en_to_es_country_dict_path, 'wb') as pickle_file:
+                pickle.dump(en_to_es_country_dict, pickle_file,
+                            protocol=pickle.HIGHEST_PROTOCOL)
 
-                # TODO: this could be faster
-                if data_dict[country]['date'] == date:
-                    data_dict[country]['confirmed'] += int(confirmed)
-                    data_dict[country]['deaths'] += int(deaths)
-                    data_dict[country]['recovered'] += int(recovered)
-                else:
-                    data_dict[country] = {
-                        'date': date,
-                        'confirmed': int(confirmed),
-                        'deaths': int(deaths),
-                        'recovered': int(recovered),
-                    }
-
-        return country_trans_dict, dict(data_dict)
+        return data_dict
 
 
-country_info = CountryInfo()
+data_manager = DataManager()
 
 
 def main():
@@ -134,23 +105,12 @@ def main():
     )
     dispatcher = updater.dispatcher
 
-    send_updates = False
-    if send_updates:
-        with open('chat_ids.txt', 'r') as chat_ids_file:
-            chat_ids_list = list(set(chat_ids_file.readlines()))
-            for chat_id in chat_ids_list:
-                dispatcher.bot.send_message(
-                    chat_id=int(chat_id),
-                    text="Hola! Los datos han sido actualizados :)",
-                )
-
     start_handler = ext.CommandHandler('start', start)
     dispatcher.add_handler(start_handler)
 
-    echo_handler = ext.MessageHandler(ext.Filters.text, get_country_info)
-    dispatcher.add_handler(echo_handler)
+    country_handler = ext.MessageHandler(ext.Filters.text, get_country_info)
+    dispatcher.add_handler(country_handler)
 
-    print("Ready!")
     logger.info("Ready!")
 
     mode = os.environ.get('MODE', 'dev')
@@ -189,21 +149,26 @@ def get_country_info(update, context):
     with open('chat_ids.txt', 'a') as chat_ids_file:
         chat_ids_file.write(str(chat_id) + '\n')
 
-    print(f"COUNTRY INFO QUERIED --> {chat_id}")
     logger.info(f"COUNTRY INFO QUERIED --> {chat_id}")
 
     country = update.message.text
-    data_dict = country_info.data_dict
+    data_dict = data_manager.data_dict
     country_list = list(data_dict.keys())
     if country not in country_list:
-        text = f"Asegurate de que has introducido correctamente el nombre del país. " \
-            f"Aquí tienes una lista de los países de los que puedes obtener información:\n{country_list}"
+        text = "Asegurate de que has introducido correctamente el nombre del país. " \
+            "Aquí tienes una lista de los países de los que puedes obtener información:\n" \
+            + '\n'.join(country_list)
     else:
         country_dict = data_dict[country]
-        text = f"País: {country}\n" \
-            f"Casos confirmados: {country_dict['confirmed']}\n" \
-            f"Numero de muertes: {country_dict['deaths']}\n" \
-            f"Numero de recuperaciones: {country_dict['recovered']} "
+        text = f"País: {country_dict['country']}\n"
+        f"Número total de casos: {country_dict['total_cases']}\n"
+        f"Número de nevos casos: {country_dict['new_cases']}\n"
+        f"Número total de muertes: {country_dict['total_deaths']} \n"
+        f"Número de nuevas muertes: {country_dict['new_deaths']} \n"
+        f"Número total de recuperaciones: {country_dict['total_recoveries']} \n"
+        f"Número de contagios activos: {country_dict['active_cases']} \n"
+        f"Número de personas en estado crítico: {country_dict['critical']} \n"
+        f"Número de casos por millón: {country_dict['cases_per_milion']} "
 
     context.bot.send_message(
         chat_id=chat_id,

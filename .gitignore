@@ -1,6 +1,8 @@
 # Extensions ignored
 *.txt
 *.csv
+*.pkl
 
 # Directories ignored
 .vscode
+__pycache__
