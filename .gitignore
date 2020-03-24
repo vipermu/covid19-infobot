@@ -2,6 +2,7 @@
 *.txt
 *.csv
 *.pkl
+*.json
 
 # Directories ignored
 .vscode
