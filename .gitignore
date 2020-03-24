@@ -3,6 +3,7 @@
 *.csv
 *.pkl
 *.json
+*.pickle
 
 # Directories ignored
 .vscode
