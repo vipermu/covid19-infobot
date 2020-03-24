@@ -38,8 +38,8 @@ def get_table_data_from_soup(
         data_soup = row.find_all('td')
 
         if (len(data_soup) > 0):
-            assert len(data_soup) == len(key_list), \
-                'Key list and numbers of data elements should be equal.'
+            if len(data_soup) == len(key_list):
+                continue
 
             data_text_list = list(map(process_data_item, data_soup))
             country_dict = dict(zip(key_list, data_text_list))
