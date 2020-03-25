@@ -1,6 +1,8 @@
-# class Text:
-#     def __init__(
-#         self,
-#         language: str,
-#     ) -> None:
-#     self.language = language
+class TextManager:
+    def __init__(
+        self,
+    ) -> None:
+        self.button_text = {
+            'es': "Ahora tu bot está en español!",
+            'en': "Your bot is in English now!",
+        }

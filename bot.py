@@ -10,6 +10,7 @@ from googletrans import Translator
 
 import scraper as scraper
 from data_utils import DataManager
+from text_utils import TextManager
 
 
 class Bot:
@@ -17,6 +18,7 @@ class Bot:
         self,
     ):
         self.data_manager = DataManager()
+        self.text_manager = TextManager()
 
         token_filename = 'dev_token.txt'
         if os.path.exists(token_filename):
@@ -97,10 +99,8 @@ class Bot:
         query = update.callback_query
         language = query.data
 
-        if language == 'es':
-            query.edit_message_text(text="Ahora tu bot está en español!")
-        elif language == 'en':
-            query.edit_message_text(text="Now your bot is in English!")
+        text = self.text_manager.button_text[language]
+        query.edit_message_text(text=text)
 
         self.data_manager.language = language
 
