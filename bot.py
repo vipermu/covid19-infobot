@@ -7,6 +7,7 @@ import telegram.ext as ext
 
 from data_utils import DataManager
 from text_utils import TextManager
+from google_drive import SpreadSheet
 
 
 class Bot:
@@ -15,6 +16,7 @@ class Bot:
     ):
         self.data_manager = DataManager()
         self.text_manager = TextManager()
+        self.spread_sheet = SpreadSheet()
 
         token_filename = 'dev_token.txt'
         if os.path.exists(token_filename):
