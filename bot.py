@@ -1,14 +1,10 @@
 import os
-import pickle
-import logging
 import time
 from typing import *
 
 import telegram as tel
 import telegram.ext as ext
-from googletrans import Translator
 
-import scraper as scraper
 from data_utils import DataManager
 from text_utils import TextManager
 
