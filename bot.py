@@ -63,7 +63,7 @@ class Bot:
             updater.start_polling()
 
         else:
-            self.logger.error("No MODE specified!")
+            print("No MODE specified!")
             sys.exit(1)
 
     def start(self, update, context):
