@@ -39,7 +39,8 @@ class Bot:
         lang_handler = ext.CommandHandler('lang', self.lang_selector)
         dispatcher.add_handler(lang_handler)
 
-        updater.dispatcher.add_handler(ext.CallbackQueryHandler(self.button))
+        updater.dispatcher.add_handler(
+            ext.CallbackQueryHandler(self.process_selected_lang))
 
         country_handler = ext.MessageHandler(
             ext.Filters.text, self.get_country_info)
@@ -95,7 +96,7 @@ class Bot:
                                   reply_markup=reply_markup,
                                   parse_mode=tel.ParseMode.HTML)
 
-    def button(self, update, context):
+    def process_selected_lang(self, update, context):
         query = update.callback_query
         language = query.data
 
