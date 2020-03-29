@@ -33,3 +33,14 @@ class SpreadSheet:
             col=2,
             value=lang,
         )
+
+    def update_history(
+        self,
+        index: int,
+        new_hist: str,
+    ):
+        self.sheet.update_cell(
+            row=index + 2,
+            col=3,
+            value=new_hist,
+        )
