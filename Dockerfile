@@ -9,7 +9,7 @@ SHELL ["conda", "run", "-n", "covid19-infobot", "/bin/bash", "-c"]
 RUN echo 'Make sure that covid19-infobot environment is activated:'
 RUN python -c "import telegram"
 
-ADD ./*.py .
+ADD ./*.py ./
 ADD covid_credentials.json .
 
 ENTRYPOINT ["conda", "run", "-n", "covid19-infobot", "python3", "main.py"]
