@@ -5,9 +5,9 @@ from typing import *
 import telegram as tel
 import telegram.ext as ext
 
-from utils.data import DataManager
-from utils.text import TextManager
-from utils.google_drive import SpreadSheet
+from data import DataManager
+from text import TextManager
+from google_drive import SpreadSheet
 
 
 class Bot:
