@@ -14,7 +14,6 @@ import data_utils as data
 class DataManager:
     def __init__(self):
         self.rescrape_time = 3600
-        self.language = 'es'
         self.update_data_dict()
 
     def update_data_dict(self):
@@ -23,7 +22,7 @@ class DataManager:
         self.data_dict['en'] = scraper.scrape_worldometers_data()
 
         en_to_es_country_dict = self.get_en_to_es_dict(self.data_dict['en'])
-        self.data_dict['es'] = {en_to_es_country_dict[en_country_name]
+        self.data_dict['es'] = {en_to_es_country_dict[en_country_name]: country_dict
                                 for en_country_name, country_dict
                                 in self.data_dict['en'].items()}
 
@@ -31,19 +30,23 @@ class DataManager:
 
     @staticmethod
     def get_en_to_es_dict(
-        data_dict: Dict[str, Dict[str, str]]
+        data_dict: Dict[str, Dict[str, str]],
     ) -> Tuple[Dict[str, str]]:
         translator = Translator()
         extended_data_dict = data_dict.copy()
 
         en_to_es_country_dict_path = './en_to_es_country_dict.pkl'
+
         if os.path.exists(en_to_es_country_dict_path):
             with open(en_to_es_country_dict_path, 'rb') as pickle_file:
                 en_to_es_country_dict = pickle.load(pickle_file)
-            return en_to_es_country_dict
-        else:
-            en_to_es_country_dict = {}
 
+            en_to_es_keys_set = set(en_to_es_country_dict.keys())
+            data_dict_keys_set = set(data_dict.keys())
+            if not len(en_to_es_keys_set.symmetric_difference(data_dict_keys_set)):
+                return en_to_es_country_dict
+
+        en_to_es_country_dict = {}
         for country_key, country_dict in data_dict.items():
             country_name = country_dict['country']
             if country_name not in country_dict.keys():
