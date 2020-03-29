@@ -67,20 +67,7 @@ class Bot:
             sys.exit(1)
 
     def start(self, update, context):
-        with open('chat_ids.txt', 'a') as chat_ids_file:
-            chat_ids_file.write(str(update.effective_chat.id) + '\n')
-
         self.lang_selector(update, context)
-
-        # if self.data_manager.language == 'en':
-        #     text = 'Send me a text with the country that you want to get information from!'
-        # elif self.data_manager.language == 'es':
-        #     text = "Hola! Mandame un mensaje con el nombre del país del que quieras recibir información."
-
-        # context.bot.send_message(
-        #     chat_id=update.effective_chat.id,
-        #     text=text,
-        # )
 
     @staticmethod
     def lang_selector(update, context):
