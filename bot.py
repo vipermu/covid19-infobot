@@ -76,8 +76,8 @@ class Bot:
 
         reply_markup = tel.InlineKeyboardMarkup(keyboard)
 
-        update.message.reply_text('<i>Escoge el idioma en que quieras que responda:\n\n'
-                                  "Choose the language you want me to answer:</i>",
+        update.message.reply_text('<i>🇪🇸 Escoge el idioma en que quieras que responda:\n\n'
+                                  "🇺🇸 🇬🇧 Choose the language you want me to answer:</i>",
                                   reply_markup=reply_markup,
                                   parse_mode=tel.ParseMode.HTML)
 
