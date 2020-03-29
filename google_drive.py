@@ -16,11 +16,11 @@ class SpreadSheet:
 
     def append_row(
         self,
-        chat_idx: int,
+        chat_id: int,
         lang: str,
     ):
         self.sheet.append_row(
-            value=[chat_idx, lang],
+            values=[chat_id, lang],
         )
 
     def update_lang(
@@ -29,7 +29,7 @@ class SpreadSheet:
         lang: str,
     ):
         self.sheet.update_cell(
-            row=index,
+            row=index + 2,
             col=2,
             value=lang,
         )
