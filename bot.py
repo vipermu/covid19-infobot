@@ -112,44 +112,47 @@ class Bot:
                 lang=language,
             )
 
+    def get_country_info(self, update, context):
+        chat_id = update.effective_chat.id
+        user_lang_list = self.spread_sheet.get_user_lang_dict_list()
+        chat_id_list = [user_dict['chat_id'] for user_dict
+                        in user_lang_list]
+
+        if chat_id not in chat_id_list:
+            self.lang_selector(update, context)
+            return
+
+        chat_id_pos = chat_id_list.index(chat_id)
+        language = user_lang_list[chat_id_pos]['language']
+
         if time.time() - self.data_manager.last_scrape_time > self.data_manager.rescrape_time:
             self.data_manager.update_data_dict()
 
         req_country = update.message.text.lower()
-        data_dict = self.data_manager.data_dict
+
+        chat_pos = chat_id_list.index(chat_id)
+        self.spread_sheet.update_history(
+            index=chat_pos,
+            new_hist=user_lang_list[chat_pos]['history'] + ' ' + req_country,
+        )
+
+        data_dict = self.data_manager.data_dict[language]
 
         country_list = [country_key for country_key in data_dict.keys()
                         if country_key != 'total:']
-
-        if self.data_manager.language == 'es':
-            es_to_en_country_dict = self.data_manager.es_to_en_country_dict
-            country_list = [country_key for country_key in es_to_en_country_dict.keys()
-                            if country_key != 'total:']
-
         country_list.sort()
 
         if req_country not in country_list:
-            text = "Asegurate de que has introducido correctamente el nombre del país. " \
-                "Aquí tienes una lista de los países de los que puedes obtener información:\n" \
-                + '\n'.join(country_list)
+            text = self.text_manager.missing_country[language] \
+                + '\n\n' + '\n'.join(country_list)
         else:
-            if self.data_manager.language == 'es':
-                req_country = es_to_en_country_dict[req_country]
-
             country_dict = data_dict[req_country.lower()]
-            text = f"<b><i>{update.message.text}</i></b> cuenta con un total de " \
-                f"<b><i>{country_dict['total_cases']} casos confirmados</i></b>.\n\n" \
-                f"Por el momento han habido " \
-                f"<b><i>{country_dict['total_deaths']} muertes</i></b> y " \
-                f"<b><i>{country_dict['total_recoveries']} recuperaciones</i></b>.\n\n" \
-                f"En las últimas horas se han confirmado " \
-                f"<b><i>{country_dict['new_cases']} nuevos casos</i></b> y " \
-                f"<b><i>{country_dict['new_deaths']} nuevos fallecimientos</i></b>.\n\n" \
-                f"Hay un total de <b><i>{country_dict['active_cases']} casos activos</i></b> "\
-                f" de los cuales <b><i>{country_dict['critical']}</i></b> se encuentran " \
-                f"en <b><i>estado crítico</i></b>. \n\n" \
-                f"Existen <b><i>{country_dict['cases_per_million']} casos " \
-                f"por cada millón</i></b> de personas. \n\n" \
+            input_country = update.message.text
+            text = self.text_manager.country_dict_to_text(
+                country_dict=country_dict,
+                input_country=input_country,
+                lang=language,
+            )
 
         context.bot.send_message(
             chat_id=chat_id,
