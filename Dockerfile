@@ -12,4 +12,4 @@ RUN python -c "import telegram"
 ADD ./main.py .
 ADD ./scraper.py .
 
-ENTRYPOINT ["conda", "run", "-n", "covid19-infobot", "python", "main.py"]
+ENTRYPOINT ["conda", "run", "-n", "covid19-infobot", "python3", "main.py"]

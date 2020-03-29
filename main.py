@@ -1,7 +1,6 @@
 from typing import *
 
-from .bot import Bot
-# from text_utils import Text
+from utils.bot import Bot
 
 
 def main():
