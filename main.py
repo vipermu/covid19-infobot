@@ -1,6 +1,6 @@
 from typing import *
 
-from bot import Bot
+from .bot import Bot
 # from text_utils import Text
 
 

@@ -7,8 +7,7 @@ from typing import *
 import telegram as tel
 from googletrans import Translator
 
-import scraper as scraper
-import data_utils as data
+import .scraper as scraper
 
 
 class DataManager:
