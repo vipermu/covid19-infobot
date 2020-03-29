@@ -88,15 +88,29 @@ class Bot:
         text = self.text_manager.button_text[language]
         query.edit_message_text(text=text)
 
-        self.data_manager.language = language
+        user_lang_list = self.spread_sheet.get_user_lang_dict_list()
+        chat_id_list = [user_dict['chat_id'] for user_dict
+                        in user_lang_list]
 
-    @staticmethod
-    def get_country_info(update, context):
         chat_id = update.effective_chat.id
-        with open('chat_ids.txt', 'a') as chat_ids_file:
-            chat_ids_file.write(str(chat_id) + '\n')
+        if chat_id in chat_id_list:
+            chat_id_pos = chat_id_list.index(chat_id)
+            self.spread_sheet.update_lang(
+                index=chat_id_pos,
+                lang=language,
+            )
+        else:
+            text = self.text_manager.welcome[language]
+            context.bot.send_message(
+                chat_id=chat_id,
+                text=text,
+                parse_mode=tel.ParseMode.HTML,
+            )
 
-        # print(f"COUNTRY INFO QUERIED --> {chat_id}")
+            self.spread_sheet.append_row(
+                chat_id=chat_id,
+                lang=language,
+            )
 
         if time.time() - self.data_manager.last_scrape_time > self.data_manager.rescrape_time:
             self.data_manager.update_data_dict()
