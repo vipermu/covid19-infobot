@@ -21,7 +21,7 @@ class TextManager:
         self.welcome = {
             'es': "Hola! 👋 \n\nMándame un mensaje con el nombre del país del que quieras información! \n\n"
             "Usa el comando /lang para cambiar el idioma del bot 😃",
-            'en': "Hi! 👋 \n\nSend me the name of the country that you want to get information from! \n\n"
+            'en': "Hi! 👋 \n\nSend me the name of the country that you want information from! \n\n"
             "Use the command /lang to switch the language of the bot 😃",
         }
 
