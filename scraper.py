@@ -43,6 +43,10 @@ def get_table_data_from_soup(
 
             data_text_list = list(map(process_data_item, data_soup))
             country_dict = dict(zip(key_list, data_text_list))
+
+            if type(country_dict['country']) != str:
+                continue
+
             data_dict[country_dict['country'].lower()] = country_dict
 
             print(f"{country_dict['country']} scraped!")
