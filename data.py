@@ -50,7 +50,7 @@ class DataManager:
             country_name = country_dict['country']
             if country_name not in country_dict.keys():
                 if country_name == 'Diamond Princess':
-                    trans_country_name = 'Diamond Princess (crucero)'
+                    trans_country_name = 'Diamond Princess'
                 elif country_name == 'Bahrain':
                     trans_country_name = 'Baréin'
                 elif country_name == 'CAR':
@@ -69,6 +69,18 @@ class DataManager:
                     trans_country_name = 'Turquía'
                 elif country_name == 'Sint Maarten':
                     trans_country_name = 'San Martín'
+                elif country_name == 'Caribbean Netherlands':
+                    trans_country_name = 'Caribe Neerlandés'
+                elif country_name == 'French Polynesia':
+                    trans_country_name = 'Polinesia Francesa'
+                elif country_name == 'Bermuda':
+                    trans_country_name = 'Bermudas'
+                elif country_name == 'French Guiana':
+                    trans_country_name = 'Guaiana Francesa'
+                elif country_name == 'DRC':
+                    trans_country_name = 'República Democràtica del Congo'
+                elif country_name == 'UAE':
+                    trans_country_name = 'Emiratos Árabes Unidos'
                 else:
                     trans_country_name = translator.translate(
                         country_name, src='en', dest='es').text

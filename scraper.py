@@ -27,9 +27,10 @@ def get_table_data_from_soup(
 ) -> None:
     data_dict = {}
     key_list = [
-        'country', 'total_cases', 'new_cases', 'total_deaths',
+        'rank', 'country', 'total_cases', 'new_cases', 'total_deaths',
         'new_deaths', 'total_recoveries', 'active_cases', 'critical',
-        'cases_per_million',
+        'cases_per_million', 'deaths_per_million', 'total_tests', 
+        'tests_per_million', 'population', 'continent'
     ]
     table = soup.find('table', {'id': 'main_table_countries_today'})
     row_list = table.find_all('tr')
@@ -37,9 +38,9 @@ def get_table_data_from_soup(
     for row in row_list:
         data_soup = row.find_all('td')
 
-        if (len(data_soup) > 0):
-            if len(data_soup) == len(key_list):
-                continue
+        if len(data_soup) > 0:
+            # if len(data_soup) == len(key_list):
+            #     continue
 
             data_text_list = list(map(process_data_item, data_soup))
             country_dict = dict(zip(key_list, data_text_list))
